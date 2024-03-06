@@ -9,6 +9,12 @@ module.exports = {
         created_at: new Date(),
         updated_at: new Date()
       },
+      {
+        id: 2,
+        policy_name: 'Transactional',
+        created_at: new Date(),
+        updated_at: new Date()
+      },
     ], {});
   },
 

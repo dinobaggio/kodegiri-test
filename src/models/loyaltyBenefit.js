@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
       benefit_name: DataTypes.STRING,
       type: DataTypes.STRING,
       value: DataTypes.INTEGER,
+      point_price: DataTypes.INTEGER,
+      threshold_price: DataTypes.INTEGER,
     },
     {
       sequelize,

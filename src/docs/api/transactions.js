@@ -1,11 +1,7 @@
 /* Transaction Model. */
 /**
  * @typedef Transaction
- * @property {string} transaction_date - Tanggal transaksi (format: YYYY-MM-DD)
  * @property {number} member_no - Nomor anggota
- * @property {string} name - Nama anggota
- * @property {string} phone_no - Nomor telepon anggota
- * @property {string} email - Email anggota
  * @property {string} items - Item yang dibeli atau transaksi lainnya
  * @property {number} total_amount - Total jumlah yang dibayarkan dalam transaksi
  */
@@ -22,7 +18,7 @@
  *     "name": "string",
  *     "phone_no": "string",
  *     "email": "string",
- *     "items": "string",
+ *     "items": "[{ 'item_name': 'item 1', 'item_price': 1000, 'item_qty': 1, 'item_subtotal': 1000 }]",
  *     "total_amount": "number"
  * }
  * @returns {Error} 400 - {"message": "Permintaan tidak valid"}

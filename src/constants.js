@@ -20,3 +20,8 @@ export const TYPE_POIN = {
   REDEEMED: 'redeemed',
   EARNED: 'earned',
 }
+
+export const TYPE_COMMUNITY = {
+  MEMBER_GET_MEMBER: 'member_get_member',
+  MEMBER_ACTIVITY: 'member_activity',
+}

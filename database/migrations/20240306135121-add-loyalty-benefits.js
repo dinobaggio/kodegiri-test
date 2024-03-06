@@ -23,6 +23,12 @@ module.exports = {
       value: {
         type: Sequelize.INTEGER
       },
+      point_price: {
+        type: Sequelize.INTEGER
+      },
+      threshold_price: {
+        type: Sequelize.INTEGER
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

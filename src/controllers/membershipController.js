@@ -50,7 +50,8 @@ async function Register(req, res, next) {
           .status(404)
           .json({ message: 'referral user tidak ditemukan' })
       }
-      await LoyaltyProgram.GetMember(memberReferral)
+      let person = { name, phone_no, email }
+      await LoyaltyProgram.GetMember(memberReferral, person)
     }
 
     const count = await Membership.count()

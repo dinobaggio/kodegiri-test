@@ -1,7 +1,12 @@
 'use strict'
-const { Model } = require('sequelize')
+const { Model, Op } = require('sequelize')
 const { GenerateInvoiceNumber } = require('../libs')
-const { BENEFIT, TYPE_POIN } = require('../constants')
+const {
+  BENEFIT,
+  TYPE_POIN,
+  TYPE_COMMUNITY,
+  TYPE_BENEFIT,
+} = require('../constants')
 
 module.exports = (sequelize, DataTypes) => {
   class LoyaltyProgram extends Model {
@@ -21,20 +26,16 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: 'benefit_id',
         foreignKey: 'id',
       })
-      this.GetMember = async function (memberReferral) {
-        const { Transaction, HistoryPoint, Membership } = models
+
+      this.GetMember = async function (memberReferral, person) {
+        const { Transaction, HistoryPoint, Membership, Community } = models
         const loyaltyProgram = await this.findOne({
           where: {
-            ['$benefit.benefit_name$']: BENEFIT.MEMBER_GET_MEMBER,
+            benefit_name: BENEFIT.MEMBER_GET_MEMBER,
           },
-          include: [
-            {
-              association: 'policy',
-            },
-            {
-              association: 'benefit',
-            },
-          ],
+          include: {
+            association: 'benefit',
+          },
         })
         if (!loyaltyProgram) {
           throw new Error('Internal server error')
@@ -74,6 +75,68 @@ module.exports = (sequelize, DataTypes) => {
             where: { id: memberReferral.id },
           },
         )
+        await Community.create({
+          type: TYPE_COMMUNITY.MEMBER_GET_MEMBER,
+          member_no: memberReferral.id,
+          name: memberReferral.name,
+          phone_no: memberReferral.phone_no,
+          email: memberReferral.email,
+          transaction_id: txId,
+          transaction_date: new Date(),
+          persons: JSON.stringify(person),
+        })
+      }
+
+      this.FirstPurchase = async function (total_amount, member, txId) {
+        const { HistoryPoint, Membership } = models
+        let programs = await this.findAll({
+          include: { association: 'benefit' },
+          where: {
+            benefit_name: {
+              [Op.like]: 'first_purchase%',
+            },
+          },
+        })
+        for (let i = 0; i < programs.length; i++) {
+          const { benefit } = programs[i]
+          if (benefit.type === TYPE_BENEFIT.PERCENTAGE) {
+            total_amount -= (total_amount / 100) * benefit.value
+            await HistoryPoint.create({
+              transaction_id: txId,
+              member_no: member.id,
+              transaction_date: new Date(),
+              type: TYPE_POIN.REDEEMED,
+              loyalty_name: programs[i].loyalty_name,
+              loyalty_id: programs[i].id,
+              existing_poin: member.remained_point,
+              earned_poin: 0,
+              balance_poin: member.remained_point,
+            })
+          } else {
+            await HistoryPoint.create({
+              transaction_id: txId,
+              member_no: member.id,
+              transaction_date: new Date(),
+              type: TYPE_POIN.EARNED,
+              loyalty_name: programs[i].loyalty_name,
+              loyalty_id: programs[i].id,
+              existing_poin: member.remained_point,
+              earned_poin: benefit.value,
+              balance_poin: member.remained_point + benefit.value,
+            })
+            await Membership.update(
+              {
+                earned_point: member.earned_point + benefit.value,
+                remained_point: member.remained_point + benefit.value,
+              },
+              {
+                where: { id: member.id },
+              },
+            )
+          }
+        }
+
+        return { total_amount }
       }
     }
   }
