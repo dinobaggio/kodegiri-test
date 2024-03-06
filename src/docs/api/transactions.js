@@ -28,5 +28,5 @@
  * @returns {Error} 400 - {"message": "Permintaan tidak valid"}
  * @returns {Error} 500 - {"message": "Internal Server Error"}
  * @returns {Error} default - Kesalahan yang tidak terduga
- * @security [{"apiKey": []}]
+ * @security [{"JWT":[]}]
  */

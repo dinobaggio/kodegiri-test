@@ -8,6 +8,20 @@ const { User } = models
 async function SignIn(req, res, next) {
   try {
     const { email, password, remember_me } = req.body
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Invalid email format' })
+    }
+
+    // Validasi password
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: 'Invalid password format' })
+    }
+
     const user = await User.findOne({
       where: { email },
       raw: true,
@@ -28,7 +42,7 @@ async function SignIn(req, res, next) {
 
       res.json({ token })
     } else {
-      res.status(401).json({ message: 'Invalid credentials' })
+      res.status(401).json({ message: 'Password atau user tidak ditemukan' })
     }
   } catch (err) {
     next(err)
@@ -68,4 +82,5 @@ function VerifyToken(req, res, next) {
 
 export default {
   SignIn,
+  VerifyToken,
 }

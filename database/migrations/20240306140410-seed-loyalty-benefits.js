@@ -2,11 +2,13 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkInsert('users', [
+    await queryInterface.bulkInsert('loyalty_benefits', [
       {
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: '$2a$12$RqWKM9TYPj.UeDbpk8EbGOyE2vyeVb7X/wFxVYo6URt4S2Zd.LVGq', // Password123@
+        policy_id: 1,
+        policy_name: "Community",
+        benefit_name: "member_get_member",
+        type: "fixed point",
+        value: 50,
         created_at: new Date(),
         updated_at: new Date()
       },
