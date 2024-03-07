@@ -65,8 +65,6 @@
  * @param {string} end_date.query - Tanggal akhir periode (format: YYYY-MM-DD)
  * @param {string} loyalty_name.query - Nama program loyalty
  * @param {string} name.query - Nama anggota
- * @param {number} value_start.query - Nilai awal transaksi poin
- * @param {number} value_end.query - Nilai akhir transaksi poin
  * @returns {Array.<HistoryPointReportResponse>} 200 - Laporan riwayat transaksi poin berhasil diperoleh
  * @returns {Error} 400 - {"message": "Permintaan tidak valid"}
  * @returns {Error} 500 - {"message": "Internal Server Error"}
