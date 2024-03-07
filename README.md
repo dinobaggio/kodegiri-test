@@ -77,7 +77,7 @@ Listening on port 3000
 
 ## **Penjelasan alur aplikasi disini**
 
-Klik [disini](https://github.com/dinobaggio/kodegiri-test/blob/main/src/docs/flow.md)
+Klik [disini](src/docs/flow.md)
 
 ## **Credentials**
 
