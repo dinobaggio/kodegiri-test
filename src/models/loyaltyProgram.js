@@ -27,6 +27,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'id',
       })
 
+      this.hasOne(models.Tier, {
+        as: 'tier',
+        sourceKey: 'tier_id',
+        foreignKey: 'id',
+      })
+
+      // =========================>
+
       this.GetMember = async function (memberReferral, person) {
         const { Transaction, HistoryPoint, Membership, Community } = models
         const loyaltyProgram = await this.findOne({
@@ -87,10 +95,11 @@ module.exports = (sequelize, DataTypes) => {
         })
       }
 
-      this.FirstPurchase = async function (total_amount, member, txId) {
+      this.FirstPurchase = async function (total_amount, member_no, txId) {
         const { HistoryPoint, Membership } = models
+        let total_value_disc = 0
         let programs = await this.findAll({
-          include: { association: 'benefit' },
+          include: [{ association: 'benefit' }, { association: 'tier' }],
           where: {
             benefit_name: {
               [Op.like]: 'first_purchase%',
@@ -98,9 +107,16 @@ module.exports = (sequelize, DataTypes) => {
           },
         })
         for (let i = 0; i < programs.length; i++) {
-          const { benefit } = programs[i]
-          if (benefit.type === TYPE_BENEFIT.PERCENTAGE) {
-            total_amount -= (total_amount / 100) * benefit.value
+          const member = await Membership.findOne({
+            where: { member_no },
+            raw: true,
+          })
+          const { benefit, tier } = programs[i]
+          if (
+            benefit.type === TYPE_BENEFIT.PERCENTAGE &&
+            member.earned_point >= tier.min_poin
+          ) {
+            total_value_disc += (total_amount / 100) * benefit.value
             await HistoryPoint.create({
               transaction_id: txId,
               member_no: member.id,
@@ -109,10 +125,26 @@ module.exports = (sequelize, DataTypes) => {
               loyalty_name: programs[i].loyalty_name,
               loyalty_id: programs[i].id,
               existing_poin: member.remained_point,
-              earned_poin: 0,
-              balance_poin: member.remained_point,
+              earned_poin: -benefit.point_price,
+              balance_poin: member.remained_point - benefit.point_price,
             })
-          } else {
+            await Membership.update(
+              {
+                redeemed_point: member.redeemed_point + benefit.point_price,
+                remained_point: member.remained_point - benefit.point_price,
+              },
+              {
+                where: { id: member.id },
+              },
+            )
+          } else if (
+            benefit.type === TYPE_BENEFIT.PERCENTAGE &&
+            member.earned_point >= tier.min_poin
+          ) {
+            const member = await Membership.findOne({
+              where: { member_no },
+              raw: true,
+            })
             await HistoryPoint.create({
               transaction_id: txId,
               member_no: member.id,
@@ -136,7 +168,84 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
 
-        return { total_amount }
+        return { total_value_disc }
+      }
+
+      this.TransactionAmount = async function (total_amount, member_no, txId) {
+        const { HistoryPoint, Membership } = models
+
+        let total_value_disc = 0
+
+        let programs = await this.findAll({
+          include: [{ association: 'benefit' }, { association: 'tier' }],
+          where: {
+            benefit_name: {
+              [Op.like]: 'transaction_amount%',
+            },
+          },
+        })
+
+        for (let i = 0; i < programs.length; i++) {
+          const member = await Membership.findOne({
+            where: { member_no },
+            raw: true,
+          })
+          const { benefit, tier } = programs[i]
+          if (
+            total_amount >= benefit?.threshold_price &&
+            member.earned_point >= tier.min_poin
+          ) {
+            if (benefit.type === TYPE_BENEFIT.FIXED_POINT) {
+              await HistoryPoint.create({
+                transaction_id: txId,
+                member_no: member.id,
+                transaction_date: new Date(),
+                type: TYPE_POIN.EARNED,
+                loyalty_name: programs[i].loyalty_name,
+                loyalty_id: programs[i].id,
+                existing_poin: member.remained_point,
+                earned_poin: benefit.value,
+                balance_poin: member.remained_point + benefit.value,
+              })
+              await Membership.update(
+                {
+                  earned_point: member.earned_point + benefit.value,
+                  remained_point: member.remained_point + benefit.value,
+                },
+                {
+                  where: { id: member.id },
+                },
+              )
+            } else if (
+              benefit.type === TYPE_BENEFIT.PERCENTAGE &&
+              member.remained_point >= benefit.point_price
+            ) {
+              total_value_disc += (total_amount / 100) * benefit.value
+              await HistoryPoint.create({
+                transaction_id: txId,
+                member_no: member.id,
+                transaction_date: new Date(),
+                type: TYPE_POIN.REDEEMED,
+                loyalty_name: programs[i].loyalty_name,
+                loyalty_id: programs[i].id,
+                existing_poin: member.remained_point,
+                earned_poin: -benefit.point_price,
+                balance_poin: member.remained_point - benefit.point_price,
+              })
+              await Membership.update(
+                {
+                  redeemed_point: member.redeemed_point + benefit.point_price,
+                  remained_point: member.remained_point - benefit.point_price,
+                },
+                {
+                  where: { id: member.id },
+                },
+              )
+            }
+          }
+        }
+
+        return { total_value_disc }
       }
     }
   }

@@ -25,15 +25,26 @@ async function Add(req, res, next) {
     let prefix_id = 'TRINV'
     let transaction_id = GenerateInvoiceNumber(lastId + 1, prefix_id)
 
+    let totalValueDisc = 0
+
+    const lTransactionAmount = await LoyaltyProgram.TransactionAmount(
+      total_amount,
+      member_no,
+      transaction_id,
+    )
+    totalValueDisc += lTransactionAmount.total_value_disc
+
     const isFirstPurchase = await firstPurchase(member_no)
     if (isFirstPurchase) {
       const first = await LoyaltyProgram.FirstPurchase(
         total_amount,
-        member,
+        member_no,
         transaction_id,
       )
-      total_amount = first.total_amount
+      totalValueDisc += first.total_value_disc
     }
+
+    total_amount -= totalValueDisc
 
     let transaction = await Transaction.create({
       member_no,
