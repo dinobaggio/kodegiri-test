@@ -1,3 +1,14 @@
+## **Requirement check**
+
+Project Requirement :
+
+- [x] Node JS
+- [ ] Postgresql (maaf saya lupa menggunakan Postgresql, karena terbiasa pakai mysql)
+- [x] Sequelize
+- [x] Prettier
+- [x] Swagger
+- [x] Tulisakan Readme untuk menjalankan API yang dibuat.
+
 ## **How to run dev**
 
 Langkah-langkah untuk menjalankan environtment dev
