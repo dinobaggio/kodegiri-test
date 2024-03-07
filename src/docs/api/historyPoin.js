@@ -71,3 +71,35 @@
  * @returns {Error} default - Kesalahan yang tidak terduga
  * @security [{"JWT":[]}]
  */
+
+/**
+ * Mendapatkan laporan riwayat transaksi poin dalam format Excel.
+ * @route GET /api/history-point/report/{type}/excel
+ * @group History Point - Operasi terkait Riwayat Transaksi Poin
+ * @param {string} type.path - Jenis transaksi poin ("earned" untuk poin yang diperoleh, "redeemed" untuk poin yang ditebus)
+ * @param {string} member_no.query - Nomor anggota
+ * @param {string} start_date.query - Tanggal awal periode (format: YYYY-MM-DD)
+ * @param {string} end_date.query - Tanggal akhir periode (format: YYYY-MM-DD)
+ * @param {string} loyalty_name.query - Nama program loyalty
+ * @param {string} name.query - Nama anggota
+ * @returns {file} 200 - Laporan riwayat transaksi poin dalam format file Excel (.xls)
+ * @returns {Error} 500 - {"message": "Internal Server Error"}
+ * @returns {Error} default - Kesalahan yang tidak terduga
+ * @security [{"JWT":[]}]
+ */
+
+/**
+ * Mendapatkan laporan riwayat transaksi poin dalam format PDF.
+ * @route GET /api/history-point/report/{type}/pdf
+ * @group History Point - Operasi terkait Riwayat Transaksi Poin
+ * @param {string} type.path - Jenis transaksi poin ("earned" untuk poin yang diperoleh, "redeemed" untuk poin yang ditebus)
+ * @param {string} member_no.query - Nomor anggota
+ * @param {string} start_date.query - Tanggal awal periode (format: YYYY-MM-DD)
+ * @param {string} end_date.query - Tanggal akhir periode (format: YYYY-MM-DD)
+ * @param {string} loyalty_name.query - Nama program loyalty
+ * @param {string} name.query - Nama anggota
+ * @returns {file} 200 - Laporan riwayat transaksi poin dalam format file PDF (.pdf)
+ * @returns {Error} 500 - {"message": "Internal Server Error"}
+ * @returns {Error} default - Kesalahan yang tidak terduga
+ * @security [{"JWT":[]}]
+ */

@@ -10,5 +10,16 @@ router.get(
   authController.VerifyToken,
   historyPointController.Report,
 )
+router.get(
+  '/report/:type/excel',
+  authController.VerifyToken,
+  historyPointController.ReportExcel,
+)
+
+router.get(
+  '/report/:type/pdf',
+  authController.VerifyToken,
+  historyPointController.ReportPDF,
+)
 
 export default router
