@@ -69,3 +69,20 @@ Maka aplikasi akan berjalan di port `:3000`
 
 Listening on port 3000
 ```
+
+## **Dokumentasi Swagger**
+
+- Jalankan aplikasi
+- Akses [apidocs](`http://localhost:3000/api-docs`)
+
+## **Penjelasan alur aplikasi disini**
+
+Klik [disini](https://github.com/dinobaggio/kodegiri-test/blob/main/src/docs/flow.js)
+
+## **Credentials**
+
+```bash
+email: john@example.com
+password: Password123@
+```
+
