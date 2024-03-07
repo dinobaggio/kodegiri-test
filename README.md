@@ -75,9 +75,9 @@ Listening on port 3000
 - Jalankan aplikasi
 - Akses [apidocs](`http://localhost:3000/api-docs`)
 
-## **Penjelasan alur aplikasi disini**
+## **Penjelasan alur loyalty program**
 
-Klik [disini](src/docs/flow.md)
+Penjelasan alur loyalty program yang saya buat bisa klik [disini](src/docs/flow.md)
 
 ## **Credentials**
 

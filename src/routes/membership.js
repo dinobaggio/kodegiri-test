@@ -1,7 +1,6 @@
 import express from 'express'
 import membershipController from '../controllers/membershipController'
 import authController from '../controllers/authController'
-import memberGetMemberController from '../controllers/memberGetMemberController'
 
 const router = express.Router()
 

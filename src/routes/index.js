@@ -6,6 +6,7 @@ import tierRouter from './tier'
 import loyaltyProgramRouter from './loyaltyProgram'
 import pointRouter from './point'
 import historyPointRouter from './historyPoint'
+import communityRouter from './community'
 
 const router = express.Router()
 
@@ -20,5 +21,6 @@ router.use('/tier', tierRouter)
 router.use('/loyalty-program', loyaltyProgramRouter)
 router.use('/point', pointRouter)
 router.use('/history-point', historyPointRouter)
+router.use('/community', communityRouter)
 
 export default router
