@@ -84,7 +84,7 @@ Listening on port 3000
 ## **Dokumentasi Swagger**
 
 - Jalankan aplikasi
-- Akses [apidocs](`http://localhost:3000/api-docs`)
+- Akses di http://localhost:3000/api-docs
 
 ## **Penjelasan alur loyalty program**
 
