@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: kodegiri_test
+    ports:
+      - "33006:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - kodegiri_test
+    volumes:
+      - kodegiri_db_data:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node_app
+    command: sh -c "npm run build && sequelize db:migrate && npm run serve"
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - kodegiri_test
+
+networks:
+  kodegiri_test:
+    driver: bridge
+volumes:
+  kodegiri_db_data:
